@@ -1,0 +1,1921 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="steel-blueprint">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TypeFlow // Aero — Tactile Typing Cyber-Deck</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js for Telemetry Visualization -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Google Fonts: Space Grotesk & JetBrains Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* =========================================================
+           COLORWAY TOKENS (STEEL BLUE SIGNATURE SYSTEM)
+           ========================================================= */
+        :root, [data-theme="steel-blueprint"] {
+            --bg-canvas: #0f1e2e;
+            --grid-line: rgba(51, 103, 144, 0.14);
+            --glass-bg: rgba(18, 36, 56, 0.72);
+            --glass-border: rgba(86, 207, 225, 0.18);
+            --primary-accent: #336790;
+            --primary-glow: rgba(51, 103, 144, 0.45);
+            --highlight-cyan: #56cfe1;
+            --caret-color: #56cfe1;
+            --text-main: #f0f6fc;
+            --text-muted: #6c869e;
+            --keycap-bg: #172c42;
+            --keycap-border: #284b6e;
+            --keycap-shadow: #08121c;
+            --keycap-active-bg: #336790;
+            --keycap-active-text: #ffffff;
+            --error-color: #ff5a5f;
+            --error-extra: #b83237;
+        }
+
+        [data-theme="arctic-paper"] {
+            --bg-canvas: #f2f5f8;
+            --grid-line: rgba(51, 103, 144, 0.1);
+            --glass-bg: rgba(255, 255, 255, 0.82);
+            --glass-border: rgba(51, 103, 144, 0.22);
+            --primary-accent: #336790;
+            --primary-glow: rgba(51, 103, 144, 0.2);
+            --highlight-cyan: #336790;
+            --caret-color: #336790;
+            --text-main: #1d2d3d;
+            --text-muted: #8fa3b5;
+            --keycap-bg: #ffffff;
+            --keycap-border: #cbd8e4;
+            --keycap-shadow: #b4c5d4;
+            --keycap-active-bg: #336790;
+            --keycap-active-text: #ffffff;
+            --error-color: #e63946;
+            --error-extra: #a4161a;
+        }
+
+        [data-theme="synthwave-sunset"] {
+            --bg-canvas: #160f29;
+            --grid-line: rgba(255, 42, 133, 0.12);
+            --glass-bg: rgba(30, 20, 56, 0.74);
+            --glass-border: rgba(255, 42, 133, 0.25);
+            --primary-accent: #ff2a85;
+            --primary-glow: rgba(255, 42, 133, 0.4);
+            --highlight-cyan: #ffbe0b;
+            --caret-color: #ffbe0b;
+            --text-main: #f8f7ff;
+            --text-muted: #76689c;
+            --keycap-bg: #241844;
+            --keycap-border: #432c7a;
+            --keycap-shadow: #0c0717;
+            --keycap-active-bg: #ff2a85;
+            --keycap-active-text: #ffffff;
+            --error-color: #ff595e;
+            --error-extra: #b5179e;
+        }
+
+        [data-theme="matcha-botanical"] {
+            --bg-canvas: #e9edc9;
+            --grid-line: rgba(56, 102, 65, 0.1);
+            --glass-bg: rgba(250, 252, 240, 0.84);
+            --glass-border: rgba(56, 102, 65, 0.22);
+            --primary-accent: #386641;
+            --primary-glow: rgba(56, 102, 65, 0.25);
+            --highlight-cyan: #386641;
+            --caret-color: #386641;
+            --text-main: #283618;
+            --text-muted: #8c9a7b;
+            --keycap-bg: #fefae0;
+            --keycap-border: #ccd5ae;
+            --keycap-shadow: #b5c192;
+            --keycap-active-bg: #386641;
+            --keycap-active-text: #fefae0;
+            --error-color: #bc4749;
+            --error-extra: #8c2f39;
+        }
+
+        /* =========================================================
+           BASE & BLUEPRINT ARCHITECTURAL BACKGROUND
+           ========================================================= */
+        body {
+            background-color: var(--bg-canvas);
+            color: var(--text-main);
+            font-family: 'Space Grotesk', sans-serif;
+            background-image:
+                linear-gradient(to right, var(--grid-line) 1px, transparent 1px),
+                linear-gradient(to bottom, var(--grid-line) 1px, transparent 1px);
+            background-size: 32px 32px;
+            transition: background-color 0.3s ease, color 0.3s ease;
+            overflow-x: hidden;
+            user-select: none;
+        }
+
+        .font-mono-code {
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* Frosted Glass Cyber-Deck Panel */
+        .aero-panel {
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 12px 32px -8px rgba(0, 0, 0, 0.28);
+            transition: background 0.3s ease, border-color 0.3s ease;
+        }
+
+        /* =========================================================
+           3D MECHANICAL KEYCAP BUTTONS
+           ========================================================= */
+        .keycap-btn {
+            background-color: var(--keycap-bg);
+            color: var(--text-muted);
+            border: 1px solid var(--keycap-border);
+            box-shadow: 0 3px 0 var(--keycap-shadow);
+            transform: translateY(0);
+            transition: transform 0.08s ease, box-shadow 0.08s ease, background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .keycap-btn:hover {
+            color: var(--text-main);
+            border-color: var(--primary-accent);
+        }
+
+        .keycap-btn:active, .keycap-btn.pressed {
+            transform: translateY(3px);
+            box-shadow: 0 0 0 var(--keycap-shadow);
+        }
+
+        .keycap-btn.active {
+            background-color: var(--keycap-active-bg);
+            color: var(--keycap-active-text);
+            border-color: var(--highlight-cyan);
+            box-shadow: 0 3px 0 var(--keycap-shadow), 0 0 12px var(--primary-glow);
+            font-weight: 600;
+        }
+
+        .keycap-btn.active:active {
+            transform: translateY(3px);
+            box-shadow: 0 0 0 var(--keycap-shadow);
+        }
+
+        /* =========================================================
+           TYPING VIEWPORT & GLIDING CARET
+           ========================================================= */
+        #words-wrapper {
+            position: relative;
+            height: 150px; /* 3 rows * 50px */
+            overflow: hidden;
+            line-height: 50px;
+        }
+
+        #words {
+            display: flex;
+            flex-wrap: wrap;
+            align-content: flex-start;
+            transition: transform 0.22s cubic-bezier(0.22, 1, 0.36, 1);
+            will-change: transform;
+        }
+
+        .word {
+            margin-right: 0.7em;
+            display: inline-flex;
+            position: relative;
+            border-bottom: 2px solid transparent;
+            transition: border-color 0.15s ease;
+        }
+
+        .word.error-underline {
+            border-bottom-color: var(--error-color);
+        }
+
+        .letter {
+            color: var(--text-muted);
+            position: relative;
+            transition: color 0.07s ease;
+        }
+
+        .letter.correct {
+            color: var(--text-main);
+        }
+
+        .letter.incorrect {
+            color: var(--error-color);
+        }
+
+        .letter.extra {
+            color: var(--error-extra);
+            text-decoration: underline;
+        }
+
+        /* Glowing Aero Caret */
+        #caret {
+            position: absolute;
+            width: 3px;
+            height: 1.35em;
+            background-color: var(--caret-color);
+            box-shadow: 0 0 10px var(--caret-color);
+            border-radius: 99px;
+            pointer-events: none;
+            transition: left 0.075s cubic-bezier(0.25, 1, 0.5, 1), top 0.075s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.2s ease;
+            z-index: 15;
+            margin-top: 7px;
+        }
+
+        #caret.blink {
+            animation: caretPulse 1.05s infinite ease-in-out;
+        }
+
+        @keyframes caretPulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.15; }
+        }
+
+        /* Unfocused Frosted Overlay */
+        #typing-arena.blurred #words,
+        #typing-arena.blurred #caret {
+            filter: blur(6px);
+            opacity: 0.3;
+        }
+
+        #focus-overlay {
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.22s ease;
+        }
+
+        #typing-arena.blurred #focus-overlay {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        /* =========================================================
+           INTERACTIVE ON-SCREEN MECHANICAL KEYBOARD VISUALIZER
+           ========================================================= */
+        .vk-key {
+            background-color: var(--keycap-bg);
+            border: 1px solid var(--keycap-border);
+            box-shadow: 0 3px 0 var(--keycap-shadow);
+            color: var(--text-muted);
+            border-radius: 6px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.72rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 34px;
+            min-width: 34px;
+            padding: 0 8px;
+            transition: all 0.07s ease;
+        }
+
+        .vk-key.lit {
+            background-color: var(--primary-accent);
+            border-color: var(--highlight-cyan);
+            color: #ffffff;
+            transform: translateY(3px);
+            box-shadow: 0 0 0 var(--keycap-shadow), 0 0 14px var(--primary-glow);
+        }
+
+        .vk-key.lit-error {
+            background-color: var(--error-color);
+            border-color: #ffffff;
+            color: #ffffff;
+            transform: translateY(3px);
+            box-shadow: 0 0 0 var(--keycap-shadow);
+        }
+
+        /* Custom Theme Swatch Pills */
+        .swatch-btn {
+            border: 1px solid var(--keycap-border);
+            background-color: var(--keycap-bg);
+            transition: all 0.15s ease;
+        }
+        .swatch-btn.active {
+            border-color: var(--highlight-cyan);
+            box-shadow: 0 0 0 2px var(--primary-glow);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between px-4 sm:px-8 py-5 max-w-6xl mx-auto">
+
+    <!-- Hidden Input for Universal Key Capture -->
+    <input type="text" id="hidden-input" class="fixed opacity-0 pointer-events-none -top-96" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+
+    <!-- =========================================================
+         1. TOP TACTICAL HUD BAR
+         ========================================================= -->
+    <header class="aero-panel rounded-2xl px-4 sm:px-6 py-3 flex flex-wrap items-center justify-between gap-4">
+        <!-- Brand Badge -->
+        <div id="logo-btn" class="flex items-center gap-3 cursor-pointer group" title="Reset Deck">
+            <div class="w-10 h-10 rounded-xl flex items-center justify-center text-white font-bold shadow-md transition-transform group-hover:scale-105" style="background: linear-gradient(135deg, #336790 0%, #1d4363 100%); border: 1px solid rgba(86, 207, 225, 0.35);">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
+            </div>
+            <div>
+                <div class="flex items-center gap-2">
+                    <span class="text-lg sm:text-xl font-bold tracking-tight">TypeFlow</span>
+                    <span class="text-[11px] font-mono-code uppercase tracking-widest px-2 py-0.5 rounded-md font-semibold text-white" style="background-color: #336790;">// AERO</span>
+                </div>
+                <p class="text-[11px] font-mono-code opacity-60 hidden sm:block">TACTILE TELEMETRY TYPING DECK</p>
+            </div>
+        </div>
+
+        <!-- Live Telemetry Mini-Pill (Visible during active session) -->
+        <div id="hud-telemetry" class="flex items-center gap-4 px-4 py-1.5 rounded-xl border border-current/10 bg-black/10 font-mono-code text-xs sm:text-sm opacity-60 transition-opacity">
+            <div class="flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full animate-pulse" style="background-color: var(--highlight-cyan);"></span>
+                <span class="opacity-70">WPM:</span>
+                <span id="hud-wpm" class="font-bold" style="color: var(--highlight-cyan);">00</span>
+            </div>
+            <div class="h-3.5 w-[1px] bg-current opacity-20"></div>
+            <div class="flex items-center gap-1.5">
+                <span class="opacity-70">ACC:</span>
+                <span id="hud-acc" class="font-bold">100%</span>
+            </div>
+        </div>
+
+        <!-- Right Controls: Key Visualizer Toggle, Sound Toggle & Theme Swatches -->
+        <div class="flex items-center gap-2.5">
+            <!-- Key Visualizer Toggle -->
+            <button id="toggle-vk-btn" class="keycap-btn active px-2.5 py-2 rounded-lg text-xs flex items-center gap-1.5" title="Toggle On-Screen Mechanical Key Deck">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <rect x="2" y="6" width="20" height="12" rx="2" />
+                    <path d="M6 10h.01M10 10h.01M14 10h.01M18 10h.01M8 14h8" stroke-linecap="round" />
+                </svg>
+                <span class="hidden md:inline">DECK</span>
+            </button>
+
+            <!-- Mechanical Switch Audio Toggle & Switch Profile Selector -->
+            <div class="flex items-center gap-1 p-1 rounded-xl border border-current/15 bg-black/10">
+                <button id="sound-toggle" class="keycap-btn active px-2.5 py-1.5 rounded-lg text-xs flex items-center gap-1.5" title="Toggle Tactile Switch Sound">
+                    <svg id="sound-icon-on" class="w-4 h-4" style="color: var(--highlight-cyan);" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
+                    </svg>
+                    <svg id="sound-icon-off" class="w-4 h-4 hidden" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15zM17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2" />
+                    </svg>
+                    <span class="hidden md:inline">SFX</span>
+                </button>
+                <button id="switch-profile-btn" class="keycap-btn px-2.5 py-1.5 rounded-lg text-[11px] flex items-center gap-1.5" title="Cycle Mechanical Switch Acoustic Profile">
+                    <span class="w-1.5 h-1.5 rounded-full" style="background-color: var(--highlight-cyan);"></span>
+                    <span id="switch-profile-label">THOCKY LINEAR</span>
+                </button>
+            </div>
+
+            <!-- Colorway Swatch Selector -->
+            <div class="flex items-center gap-1.5 p-1 rounded-xl border border-current/15 bg-black/10" role="group" aria-label="Colorway Theme Switcher">
+                <button data-theme-target="steel-blueprint" class="swatch-btn active flex items-center gap-1.5 px-2 py-1 rounded-lg text-[11px] font-mono-code" title="Steel Blueprint (#336790)">
+                    <span class="w-3 h-3 rounded-full border border-white/30" style="background: linear-gradient(135deg, #336790 50%, #56cfe1 50%);"></span>
+                    <span class="hidden lg:inline">Steel</span>
+                </button>
+                <button data-theme-target="arctic-paper" class="swatch-btn flex items-center gap-1.5 px-2 py-1 rounded-lg text-[11px] font-mono-code" title="Arctic Paper (Light Tactile)">
+                    <span class="w-3 h-3 rounded-full border border-black/20" style="background: linear-gradient(135deg, #f2f5f8 50%, #336790 50%);"></span>
+                    <span class="hidden lg:inline">Arctic</span>
+                </button>
+                <button data-theme-target="synthwave-sunset" class="swatch-btn flex items-center gap-1.5 px-2 py-1 rounded-lg text-[11px] font-mono-code" title="Synthwave Sunset">
+                    <span class="w-3 h-3 rounded-full border border-white/30" style="background: linear-gradient(135deg, #ff2a85 50%, #ffbe0b 50%);"></span>
+                    <span class="hidden lg:inline">Synth</span>
+                </button>
+                <button data-theme-target="matcha-botanical" class="swatch-btn flex items-center gap-1.5 px-2 py-1 rounded-lg text-[11px] font-mono-code" title="Matcha Botanical">
+                    <span class="w-3 h-3 rounded-full border border-black/20" style="background: linear-gradient(135deg, #e9edc9 50%, #386641 50%);"></span>
+                    <span class="hidden lg:inline">Matcha</span>
+                </button>
+            </div>
+
+            <!-- Cloud Account & Sync Button -->
+            <button id="auth-open-btn" class="keycap-btn px-3 py-1.5 rounded-lg text-xs flex items-center gap-2" title="Sign In / Sync Progress">
+                <span id="sync-status-dot" class="w-2 h-2 rounded-full bg-amber-400"></span>
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+                <span id="auth-btn-label" class="font-semibold">SIGN IN</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- =========================================================
+         AUTHENTICATION & CLOUD PROGRESS MODAL
+         ========================================================= -->
+    <div id="auth-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/60 backdrop-blur-md">
+        <div class="aero-panel rounded-2xl w-full max-w-md p-6 relative shadow-2xl border border-white/15">
+            <div class="flex items-center justify-between mb-4">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-8 h-8 rounded-lg flex items-center justify-center text-white font-bold" style="background-color: #336790;">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z" />
+                        </svg>
+                    </div>
+                    <div>
+                        <h2 class="text-base font-bold tracking-tight">Cloud Pilot Profile</h2>
+                        <p class="text-[11px] font-mono-code opacity-60">USER_PROGRESS SYNC ENGINE</p>
+                    </div>
+                </div>
+                <button id="auth-close-btn" class="keycap-btn w-8 h-8 rounded-lg flex items-center justify-center text-xs" title="Close">✕</button>
+            </div>
+
+            <!-- Feedback Alert Banner -->
+            <div id="auth-feedback" class="hidden mb-4 px-3.5 py-2.5 rounded-xl text-xs font-mono-code border"></div>
+
+            <!-- Signed-Out View: Sign In / Sign Up Form -->
+            <div id="auth-guest-view">
+                <div class="grid grid-cols-2 gap-2 p-1 rounded-xl bg-black/20 border border-current/10 mb-4">
+                    <button type="button" id="tab-signin" class="keycap-btn active py-1.5 rounded-lg text-xs">SIGN IN</button>
+                    <button type="button" id="tab-signup" class="keycap-btn py-1.5 rounded-lg text-xs">SIGN UP</button>
+                </div>
+
+                <form id="auth-form" class="flex flex-col gap-3.5">
+                    <div>
+                        <label class="block text-[11px] font-mono-code uppercase opacity-70 mb-1">Email Address</label>
+                        <input type="email" id="auth-email" required placeholder="pilot@typeflow.aero" class="w-full px-3.5 py-2.5 rounded-xl bg-black/20 border border-current/20 font-mono-code text-sm focus:outline-none focus:border-[#56cfe1]">
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-mono-code uppercase opacity-70 mb-1">Password</label>
+                        <div class="relative">
+                            <input type="password" id="auth-password" required minlength="6" placeholder="••••••••" class="w-full pl-3.5 pr-10 py-2.5 rounded-xl bg-black/20 border border-current/20 font-mono-code text-sm focus:outline-none focus:border-[#56cfe1]">
+                            <button type="button" id="toggle-password-visibility" class="absolute right-3 top-1/2 -translate-y-1/2 opacity-60 hover:opacity-100 transition-opacity focus:outline-none" title="Toggle password visibility">
+                                <svg id="eye-icon" class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                </svg>
+                                <svg id="eye-off-icon" class="w-4 h-4 hidden" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.542-7a10.07 10.07 0 014.136-5.164m3.092-1.39A9.957 9.957 0 0112 5c4.478 0 8.268 2.943 9.542 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21M3 3l18 18" />
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                    <button type="submit" id="auth-submit-btn" class="keycap-btn active w-full py-2.5 rounded-xl text-xs font-bold tracking-wider mt-1">
+                        SIGN IN TO DECK
+                    </button>
+                </form>
+                <p class="text-[11px] font-mono-code opacity-60 mt-4 text-center">
+                    Sign in to automatically back up and restore your typing sessions, WPM records, and deck settings.
+                </p>
+            </div>
+
+            <!-- Signed-In View: Account Summary & Sign Out -->
+            <div id="auth-user-view" class="hidden flex-col gap-4">
+                <div class="p-3.5 rounded-xl bg-black/20 border border-current/15 font-mono-code text-xs space-y-1.5">
+                    <div class="flex items-center justify-between">
+                        <span class="opacity-60">PILOT EMAIL</span>
+                        <span id="profile-email" class="font-bold truncate max-w-[200px]">-</span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="opacity-60">USER ID</span>
+                        <span id="profile-uid" class="text-[10px] opacity-80 truncate max-w-[200px]">-</span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="opacity-60">CLOUD SYNC</span>
+                        <span id="profile-last-sync" class="text-[11px]" style="color: var(--highlight-cyan);">Synced</span>
+                    </div>
+                </div>
+
+                <!-- Saved Career Stats Grid -->
+                <div class="grid grid-cols-3 gap-2.5 font-mono-code text-center">
+                    <div class="p-3 rounded-xl bg-black/15 border border-current/10">
+                        <div class="text-[10px] opacity-60">BEST WPM</div>
+                        <div id="profile-best-wpm" class="text-xl font-bold mt-0.5" style="color: var(--highlight-cyan);">0</div>
+                    </div>
+                    <div class="p-3 rounded-xl bg-black/15 border border-current/10">
+                        <div class="text-[10px] opacity-60">TESTS</div>
+                        <div id="profile-tests-count" class="text-xl font-bold mt-0.5">0</div>
+                    </div>
+                    <div class="p-3 rounded-xl bg-black/15 border border-current/10">
+                        <div class="text-[10px] opacity-60">AVG ACC</div>
+                        <div id="profile-avg-acc" class="text-xl font-bold mt-0.5">100%</div>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-2.5 mt-1">
+                    <button type="button" id="force-sync-btn" class="keycap-btn flex-1 py-2.5 rounded-xl text-xs">
+                        SYNC NOW
+                    </button>
+                    <button type="button" id="signout-btn" class="keycap-btn flex-1 py-2.5 rounded-xl text-xs" style="border-color: var(--error-color); color: var(--error-color);">
+                        SIGN OUT
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- =========================================================
+         MAIN INTERACTIVE WORKSPACE
+         ========================================================= -->
+    <main class="w-full flex-1 flex flex-col items-center justify-center my-auto py-6 gap-6">
+
+        <!-- 2. 3D KEYCAP CONTROL DOCK -->
+        <div id="control-dock" class="aero-panel rounded-2xl px-4 py-3 flex flex-wrap items-center justify-center gap-3 sm:gap-5 transition-opacity duration-200">
+            <!-- Modifiers -->
+            <div class="flex items-center gap-2">
+                <button id="toggle-punctuation" class="keycap-btn px-3 py-1.5 rounded-lg text-xs">
+                    @ PUNCT
+                </button>
+                <button id="toggle-numbers" class="keycap-btn px-3 py-1.5 rounded-lg text-xs">
+                    # NUM
+                </button>
+            </div>
+
+            <div class="h-5 w-[1px] bg-current opacity-20 hidden sm:block"></div>
+
+            <!-- Language Selector -->
+            <div class="flex items-center gap-1.5">
+                <select id="language-select" class="keycap-btn px-2.5 py-1.5 rounded-lg text-xs bg-transparent cursor-pointer focus:outline-none">
+                    <option value="en" class="bg-[#0f1e2e] text-white">EN // English</option>
+                    <option value="es" class="bg-[#0f1e2e] text-white">ES // Español</option>
+                    <option value="fr" class="bg-[#0f1e2e] text-white">FR // Français</option>
+                    <option value="de" class="bg-[#0f1e2e] text-white">DE // Deutsch</option>
+                    <option value="it" class="bg-[#0f1e2e] text-white">IT // Italiano</option>
+                </select>
+            </div>
+
+            <div class="h-5 w-[1px] bg-current opacity-20 hidden sm:block"></div>
+
+            <!-- Primary Mode Switcher -->
+            <div class="flex items-center gap-2">
+                <button id="mode-time" class="keycap-btn active px-3.5 py-1.5 rounded-lg text-xs flex items-center gap-1.5">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+                        <circle cx="12" cy="12" r="9" />
+                        <path d="M12 7v5l3 2" stroke-linecap="round" />
+                    </svg>
+                    TIME
+                </button>
+                <button id="mode-words" class="keycap-btn px-3.5 py-1.5 rounded-lg text-xs flex items-center gap-1.5">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+                        <path d="M4 7h16M4 12h16M4 17h10" stroke-linecap="round" />
+                    </svg>
+                    WORDS
+                </button>
+            </div>
+
+            <div class="h-5 w-[1px] bg-current opacity-20 hidden sm:block"></div>
+
+            <!-- Sub-option Keycaps (15s/30s/60s or 10/25/50) -->
+            <div id="sub-options" class="flex items-center gap-2">
+                <!-- Populated dynamically -->
+            </div>
+        </div>
+
+        <!-- 3. FRAMED TYPING VIEWPORT SECTION -->
+        <section id="typing-section" class="w-full max-w-4xl flex flex-col items-center gap-5">
+            <!-- Glass Typing Arena Card -->
+            <div id="typing-arena" class="aero-panel relative w-full rounded-2xl overflow-hidden cursor-text p-6 sm:p-8">
+                <!-- Top Edge Progress Bar -->
+                <div class="absolute top-0 left-0 right-0 h-1.5 bg-black/20">
+                    <div id="progress-bar" class="h-full transition-all duration-200 ease-out" style="width: 0%; background: linear-gradient(90deg, #336790, var(--highlight-cyan));"></div>
+                </div>
+
+                <!-- Arena Top Metadata Row -->
+                <div class="flex items-center justify-between mb-4 font-mono-code">
+                    <div class="flex items-center gap-2">
+                        <span class="text-xs uppercase tracking-wider opacity-60">COUNTER</span>
+                        <span id="live-counter" class="text-2xl sm:text-3xl font-bold" style="color: var(--highlight-cyan);">30</span>
+                    </div>
+                    <div class="text-xs opacity-60 hidden sm:flex items-center gap-2">
+                        <span id="cloud-badge-text">LOCAL GUEST</span>
+                        <span id="engine-status-pill" class="px-2 py-0.5 rounded bg-black/15 border border-current/15">READY</span>
+                    </div>
+                </div>
+
+                <!-- Focus Warning Frosted Overlay -->
+                <div id="focus-overlay" class="absolute inset-0 z-20 flex flex-col items-center justify-center gap-2 backdrop-blur-sm bg-black/10">
+                    <div class="px-5 py-3 rounded-xl aero-panel flex items-center gap-2.5 text-sm sm:text-base font-semibold shadow-lg">
+                        <svg class="w-5 h-5" style="color: var(--highlight-cyan);" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5" />
+                        </svg>
+                        <span>Click or Press Any Key to Engage</span>
+                    </div>
+                </div>
+
+                <!-- 3-Line Auto-Scrolling Monospace Word Stream -->
+                <div id="words-wrapper" class="font-mono-code text-2xl sm:text-[1.75rem] tracking-normal">
+                    <div id="caret" class="blink"></div>
+                    <div id="words"></div>
+                </div>
+
+                <!-- Bottom Action Strip inside Arena -->
+                <div class="mt-5 pt-3 border-t border-current/10 flex items-center justify-between text-xs font-mono-code">
+                    <span class="opacity-60">TIP: <strong class="opacity-100">TAB + ENTER</strong> OR <strong class="opacity-100">ESC</strong> TO RESET</span>
+                    <button id="restart-btn" class="keycap-btn px-3 py-1.5 rounded-lg flex items-center gap-1.5 text-xs" title="Restart Test">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.4" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                        </svg>
+                        <span>RESET</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- 4. INTERACTIVE ON-SCREEN MECHANICAL KEY VISUALIZER -->
+            <div id="virtual-keyboard" class="aero-panel hidden md:flex flex-col items-center gap-1.5 p-3.5 rounded-2xl w-full max-w-3xl transition-all">
+                <!-- Row 1: QWERTY -->
+                <div class="flex items-center justify-center gap-1.5" id="vk-row-1"></div>
+                <!-- Row 2: ASDF -->
+                <div class="flex items-center justify-center gap-1.5" id="vk-row-2"></div>
+                <!-- Row 3: ZXCV + Backspace -->
+                <div class="flex items-center justify-center gap-1.5" id="vk-row-3"></div>
+                <!-- Row 4: Spacebar -->
+                <div class="flex items-center justify-center gap-1.5 w-full mt-0.5">
+                    <div data-vk=" " class="vk-key w-64 tracking-widest text-[10px]">SPACEBAR</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 5. POST-TEST BENTO ANALYTICS GRID -->
+        <section id="results-section" class="w-full max-w-5xl hidden flex-col gap-5">
+            <!-- Top Bento Row: Hero WPM + Hero Accuracy + Telemetry Chart -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-5">
+                <!-- Left Hero Stack (4 cols) -->
+                <div class="lg:col-span-4 grid grid-cols-2 lg:grid-cols-1 gap-4">
+                    <!-- Hero WPM Bento Card -->
+                    <div class="aero-panel rounded-2xl p-6 flex flex-col justify-between relative overflow-hidden" style="border-left: 4px solid #336790;">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-mono-code uppercase tracking-wider opacity-70">NET SPEED</span>
+                            <span class="px-2 py-0.5 rounded text-[10px] font-mono-code font-bold text-white" style="background-color: #336790;">WPM</span>
+                        </div>
+                        <div id="res-wpm" class="font-mono-code text-5xl sm:text-6xl font-bold mt-2 tracking-tight" style="color: var(--highlight-cyan);">0</div>
+                        <div class="text-xs opacity-60 mt-2 font-mono-code">Words per minute</div>
+                    </div>
+
+                    <!-- Hero Accuracy Bento Card -->
+                    <div class="aero-panel rounded-2xl p-6 flex flex-col justify-between relative overflow-hidden" style="border-left: 4px solid var(--highlight-cyan);">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-mono-code uppercase tracking-wider opacity-70">PRECISION</span>
+                            <span class="px-2 py-0.5 rounded text-[10px] font-mono-code font-bold border border-current/20">ACC</span>
+                        </div>
+                        <div id="res-acc" class="font-mono-code text-5xl sm:text-6xl font-bold mt-2 tracking-tight">0%</div>
+                        <div class="text-xs opacity-60 mt-2 font-mono-code">Keystroke accuracy</div>
+                    </div>
+                </div>
+
+                <!-- Right Telemetry Chart Bento Card (8 cols) -->
+                <div class="lg:col-span-8 aero-panel rounded-2xl p-5 sm:p-6 flex flex-col justify-between">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="text-xs font-mono-code uppercase tracking-wider opacity-75">TELEMETRY TIMELINE // WPM vs RAW</span>
+                        <span id="res-test-type" class="text-xs font-mono-code px-2.5 py-1 rounded-lg bg-black/15 border border-current/15 font-semibold" style="color: var(--highlight-cyan);">time 30</span>
+                    </div>
+                    <div class="relative h-60 sm:h-64 w-full">
+                        <canvas id="wpm-chart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bottom Bento Metrics Row -->
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 font-mono-code">
+                <div class="aero-panel rounded-2xl p-4 sm:p-5">
+                    <div class="text-[11px] uppercase opacity-60">RAW WPM</div>
+                    <div id="res-raw" class="text-2xl sm:text-3xl font-bold mt-1">0</div>
+                </div>
+                <div class="aero-panel rounded-2xl p-4 sm:p-5">
+                    <div class="text-[11px] uppercase opacity-60">CONSISTENCY</div>
+                    <div id="res-consistency" class="text-2xl sm:text-3xl font-bold mt-1" style="color: var(--highlight-cyan);">0%</div>
+                </div>
+                <div class="aero-panel rounded-2xl p-4 sm:p-5">
+                    <div class="text-[11px] uppercase opacity-60" title="Correct / Incorrect / Extra / Missed">CHARACTERS (C/I/E/M)</div>
+                    <div id="res-chars" class="text-lg sm:text-xl font-bold mt-1.5">0/0/0/0</div>
+                </div>
+                <div class="aero-panel rounded-2xl p-4 sm:p-5">
+                    <div class="text-[11px] uppercase opacity-60">DURATION</div>
+                    <div id="res-duration" class="text-2xl sm:text-3xl font-bold mt-1">30s</div>
+                </div>
+            </div>
+
+            <!-- Tactile Action Buttons -->
+            <div class="flex flex-wrap items-center justify-center gap-4 mt-2">
+                <button id="next-test-btn" class="keycap-btn active px-7 py-3 rounded-xl text-sm flex items-center gap-2">
+                    <span>NEXT TEST</span>
+                    <span class="text-[10px] opacity-80 px-1.5 py-0.5 rounded bg-black/20">TAB + ENTER</span>
+                </button>
+                <button id="repeat-test-btn" class="keycap-btn px-6 py-3 rounded-xl text-sm flex items-center gap-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                    </svg>
+                    <span>REPEAT SAME WORDS</span>
+                </button>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- =========================================================
+         FOOTER TELEMETRY STATUS LINE
+         ========================================================= -->
+    <footer class="w-full py-3 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs font-mono-code opacity-70">
+        <div class="flex items-center gap-3">
+            <span>SYS.THEME: <strong id="footer-theme-name">STEEL-BLUEPRINT</strong></span>
+            <span>•</span>
+            <span>BEST WPM: <strong id="footer-best-wpm">0</strong></span>
+            <span>•</span>
+            <span id="footer-sync-state">GUEST MODE</span>
+        </div>
+        <div>
+            TypeFlow // Aero — Frosted Cyber-Deck Engine
+        </div>
+    </footer>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import {
+            getAuth,
+            signInAnonymously,
+            signInWithCustomToken,
+            createUserWithEmailAndPassword,
+            signInWithEmailAndPassword,
+            signOut,
+            onAuthStateChanged
+        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import {
+            getFirestore,
+            doc,
+            getDoc,
+            setDoc
+        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        /**
+         * TypeFlow // Aero — Tactile Frosted-Glass Typing Speed Test
+         * Features Steel Blue (#336790) signature aesthetic, 3D mechanical keycaps,
+         * real-time on-screen key visualizer, Web Audio switch acoustics, Bento analytics,
+         * and Firebase Auth + Firestore user_progress state persistence.
+         */
+
+        // =========================================================
+        // FIREBASE INITIALIZATION & USER_PROGRESS CLOUD SYNC
+        // =========================================================
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const firebaseConfig = typeof __firebase_config !== 'undefined'
+            ? JSON.parse(__firebase_config)
+            : { apiKey: "demo-key", authDomain: "demo.firebaseapp.com", projectId: "demo-project" };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        let currentUser = null;
+        let authMode = 'signin'; // 'signin' | 'signup'
+        let saveDebounceTimer = null;
+        let isRestoringProgress = false;
+
+        // Persistent career & session progress structure stored in `user_progress`
+        const cloudProgress = {
+            bestWpm: 0,
+            testsCompleted: 0,
+            totalAccuracySum: 0,
+            recentTests: []
+        };
+
+        /**
+         * Reference to the user's `user_progress` document strictly following Rule 1
+         */
+        function getUserProgressDocRef(uid) {
+            return doc(db, 'artifacts', appId, 'users', uid, 'user_progress', 'state');
+        }
+
+        function updateSyncIndicator(statusText, colorClass = 'bg-emerald-400') {
+            const dot = document.getElementById('sync-status-dot');
+            if (dot) dot.className = `w-2 h-2 rounded-full ${colorClass}`;
+            const badge = document.getElementById('cloud-badge-text');
+            if (badge) badge.textContent = statusText;
+        }
+
+        async function saveProgressToCloud(immediate = false) {
+            if (!currentUser || isRestoringProgress) return;
+            
+            const payload = {
+                updatedAt: new Date().toISOString(),
+                preferences: {
+                    mode: state.mode,
+                    timeLimit: state.timeLimit,
+                    wordLimit: state.wordLimit,
+                    punctuation: state.punctuation,
+                    numbers: state.numbers,
+                    language: state.language,
+                    soundEnabled: state.soundEnabled,
+                    switchProfileIndex: state.switchProfileIndex,
+                    showDeck: state.showDeck,
+                    theme: state.theme
+                },
+                sessionState: {
+                    isStarted: state.isStarted,
+                    isFinished: state.isFinished,
+                    currentIndex: state.currentIndex,
+                    typedChars: state.typedChars,
+                    timer: state.timer,
+                    timeLeft: state.timeLeft,
+                    words: state.words
+                },
+                careerStats: {
+                    bestWpm: cloudProgress.bestWpm,
+                    testsCompleted: cloudProgress.testsCompleted,
+                    totalAccuracySum: cloudProgress.totalAccuracySum,
+                    recentTests: cloudProgress.recentTests.slice(-10)
+                }
+            };
+
+            const doSave = async () => {
+                try {
+                    await setDoc(getUserProgressDocRef(currentUser.uid), payload, { merge: true });
+                    updateSyncIndicator('CLOUD SYNCED', 'bg-emerald-400');
+                    const syncStateEl = document.getElementById('footer-sync-state');
+                    if (syncStateEl) syncStateEl.textContent = 'CLOUD SYNCED';
+                } catch (err) {
+                    console.error('Error saving progress to Firestore:', err);
+                    updateSyncIndicator('SYNC ERROR', 'bg-rose-500');
+                }
+            };
+
+            if (immediate) {
+                if (saveDebounceTimer) clearTimeout(saveDebounceTimer);
+                await doSave();
+            } else {
+                if (saveDebounceTimer) clearTimeout(saveDebounceTimer);
+                saveDebounceTimer = setTimeout(doSave, 1200);
+            }
+        }
+
+        async function loadProgressFromCloud(uid) {
+            try {
+                isRestoringProgress = true;
+                const docSnap = await getDoc(getUserProgressDocRef(uid));
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    
+                    if (data.preferences) {
+                        const p = data.preferences;
+                        state.mode = p.mode || 'time';
+                        state.timeLimit = p.timeLimit || 30;
+                        state.wordLimit = p.wordLimit || 25;
+                        state.punctuation = Boolean(p.punctuation);
+                        state.numbers = Boolean(p.numbers);
+                        state.language = p.language || 'en';
+                        state.soundEnabled = p.soundEnabled !== undefined ? Boolean(p.soundEnabled) : true;
+                        state.switchProfileIndex = Number.isInteger(p.switchProfileIndex) ? p.switchProfileIndex : 0;
+                        state.showDeck = p.showDeck !== undefined ? Boolean(p.showDeck) : true;
+                        state.theme = p.theme || 'steel-blueprint';
+
+                        applyPreferencesToUI();
+                    }
+
+                    if (data.careerStats) {
+                        cloudProgress.bestWpm = data.careerStats.bestWpm || 0;
+                        cloudProgress.testsCompleted = data.careerStats.testsCompleted || 0;
+                        cloudProgress.totalAccuracySum = data.careerStats.totalAccuracySum || 0;
+                        cloudProgress.recentTests = data.careerStats.recentTests || [];
+
+                        updateProfileModalUI();
+                    }
+
+                    if (data.sessionState && data.sessionState.words && data.sessionState.words.length > 0) {
+                        const s = data.sessionState;
+                        state.isStarted = s.isStarted || false;
+                        state.isFinished = s.isFinished || false;
+                        state.currentIndex = s.currentIndex || 0;
+                        state.typedChars = s.typedChars || '';
+                        state.timer = s.timer || 0;
+                        state.timeLeft = s.timeLeft || state.timeLimit;
+                        state.words = s.words;
+
+                        renderWords();
+                        updateCounterDisplay();
+                    }
+
+                    updateSyncIndicator('RESTORED', 'bg-emerald-400');
+                }
+            } catch (err) {
+                console.error('Error loading progress from Firestore:', err);
+            } finally {
+                isRestoringProgress = false;
+            }
+        }
+
+        function applyPreferencesToUI() {
+            document.documentElement.setAttribute('data-theme', state.theme);
+            document.getElementById('footer-theme-name').textContent = state.theme.toUpperCase();
+            document.querySelectorAll('[data-theme-target]').forEach(b => {
+                b.classList.toggle('active', b.dataset.themeTarget === state.theme);
+            });
+
+            document.getElementById('mode-time').classList.toggle('active', state.mode === 'time');
+            document.getElementById('mode-words').classList.toggle('active', state.mode === 'words');
+            document.getElementById('toggle-punctuation').classList.toggle('active', state.punctuation);
+            document.getElementById('toggle-numbers').classList.toggle('active', state.numbers);
+            document.getElementById('language-select').value = state.language;
+
+            els.soundToggle.classList.toggle('active', state.soundEnabled);
+            els.soundIconOn.classList.toggle('hidden', !state.soundEnabled);
+            els.soundIconOff.classList.toggle('hidden', state.soundEnabled);
+
+            const activeProfile = SWITCH_PROFILES[state.switchProfileIndex] || SWITCH_PROFILES[0];
+            document.getElementById('switch-profile-label').textContent = activeProfile.label;
+
+            document.getElementById('toggle-vk-btn').classList.toggle('active', state.showDeck);
+            els.virtualKeyboard.classList.toggle('md:flex', state.showDeck);
+
+            renderSubOptions();
+        }
+
+        async function initAuthSession() {
+            try {
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                    await signInWithCustomToken(auth, __initial_auth_token);
+                } else if (!auth.currentUser) {
+                    await signInAnonymously(auth);
+                }
+            } catch (err) {
+                console.warn('Initial auth bootstrap notice:', err);
+            }
+        }
+
+        const MULTILINGUAL_WORD_BANKS = {
+            en: [
+                "system", "vector", "module", "kernel", "signal", "stream", "cipher", "matrix",
+                "protocol", "network", "binary", "syntax", "render", "packet", "buffer", "socket",
+                "memory", "thread", "device", "bridge", "client", "server", "router", "switch",
+                "screen", "window", "frame", "pixel", "shader", "vertex", "layout", "grid",
+                "steel", "cobalt", "arctic", "ocean", "glacier", "horizon", "current", "tide",
+                "beacon", "compass", "anchor", "harbor", "vessel", "radar", "sonar", "orbit",
+                "launch", "thrust", "engine", "turbine", "circuit", "sensor", "analog", "digital",
+                "optics", "laser", "prism", "mirror", "glass", "crystal", "quartz", "carbon",
+                "titanium", "alloy", "forge", "anvil", "hammer", "chisel", "design", "craft",
+                "build", "create", "focus", "rhythm", "speed", "motion", "energy", "light",
+                "sound", "pulse", "wave", "spark", "cloud", "storm", "frost", "winter",
+                "north", "polar", "summit", "ridge", "valley", "canyon", "river", "forest",
+                "timber", "stone", "granite", "marble", "slate", "paper", "ink", "letter",
+                "word", "phrase", "story", "chapter", "volume", "index", "archive", "the",
+                "and", "for", "with", "from", "into", "over", "under", "between", "through",
+                "while", "where", "when", "which", "that", "this", "these", "those", "every", "always"
+            ],
+            es: [
+                "sistema", "vector", "modulo", "nucleo", "senal", "flujo", "cifrado", "matriz",
+                "protocolo", "red", "binario", "sintaxis", "render", "paquete", "memoria", "hilo",
+                "dispositivo", "puente", "cliente", "servidor", "enrutador", "pantalla", "ventana",
+                "marco", "pixel", "vertice", "disposicion", "rejilla", "acero", "cobalto", "artico",
+                "oceano", "glaciar", "horizonte", "corriente", "marea", "faro", "brújula", "ancla",
+                "puerto", "buque", "radar", "sonar", "orbita", "lanzamiento", "impulso", "motor",
+                "turbina", "circuito", "sensor", "analogico", "digital", "optica", "laser", "prisma",
+                "espejo", "vidrio", "cristal", "cuarzo", "carbono", "titanio", "aleación", "forja",
+                "yunque", "martillo", "cincel", "diseño", "arte", "construir", "crear", "enfoque",
+                "ritmo", "velocidad", "movimiento", "energia", "luz", "sonido", "pulso", "onda",
+                "chispa", "nube", "tormenta", "helada", "invierno", "norte", "polar", "cumbre",
+                "cresta", "valle", "cañon", "rio", "bosque", "madera", "piedra", "granito",
+                "marmol", "pizarra", "papel", "tinta", "carta", "palabra", "frase", "historia",
+                "capitulo", "volumen", "indice", "archivo", "el", "la", "los", "las", "un",
+                "una", "para", "con", "desde", "hacia", "sobre", "entre", "durante", "siempre"
+            ],
+            fr: [
+                "systeme", "vecteur", "module", "noyau", "signal", "flux", "chiffre", "matrice",
+                "protocole", "reseau", "binaire", "syntaxe", "rendu", "paquet", "memoire", "fil",
+                "appareil", "pont", "client", "serveur", "routeur", "ecran", "fenetre", "cadre",
+                "pixel", "sommet", "grille", "acier", "cobalt", "arctique", "ocean", "glacier",
+                "horizon", "courant", "marée", "phare", "boussole", "ancre", "port", "navire",
+                "radar", "sonar", "orbite", "lancement", "pousse", "moteur", "turbine", "circuit",
+                "capteur", "analogique", "numerique", "optique", "laser", "prisme", "miroir", "verre",
+                "cristal", "quartz", "carbone", "titane", "alliage", "forge", "enclume", "marteau",
+                "ciseau", "design", "art", "construire", "creer", "foyer", "rythme", "vitesse",
+                "mouvement", "energie", "lumiere", "son", "impulsion", "vague", "etincelle", "nuage",
+                "tempete", "gel", "hiver", "nord", "polaire", "sommet", "crete", "vallee",
+                "canyon", "riviere", "foret", "bois", "pierre", "granit", "marbre", "ardoise",
+                "papier", "encre", "lettre", "mot", "phrase", "histoire", "chapitre", "volume",
+                "index", "archive", "le", "la", "les", "un", "une", "pour", "avec", "dans",
+                "sur", "sous", "entre", "pendant", "toujours", "chaque", "tous", "cette"
+            ],
+            de: [
+                "system", "vektor", "modul", "kern", "signal", "strom", "ziffer", "matrix",
+                "protokoll", "netzwerk", "binar", "syntax", "render", "paket", "puffer", "socket",
+                "speicher", "faden", "geraet", "bruecke", "klient", "server", "router", "schalter",
+                "bildschirm", "fenster", "rahmen", "pixel", "scheitel", "raster", "stahl", "kobalt",
+                "arktis", "ozean", "gletscher", "horizont", "stromung", "gezeiten", "kompass", "anker",
+                "hafen", "schiff", "radar", "sonar", "orbit", "start", "schub", "motor",
+                "turbine", "schaltung", "sensor", "analog", "digital", "optik", "laser", "prisma",
+                "spiegel", "glas", "kristall", "quarz", "kohlenstoff", "titan", "legierung", "schmiede",
+                "amboss", "hammer", "meissel", "design", "kunst", "bauen", "erstellen", "fokus",
+                "rhythmus", "tempo", "bewegung", "energie", "licht", "klang", "impuls", "welle",
+                "funke", "wolke", "sturm", "frost", "winter", "nord", "polar", "gipfel",
+                "grat", "tal", "schlucht", "fluss", "wald", "holz", "stein", "granit",
+                "marmor", "schiefer", "papier", "tinte", "brief", "wort", "satz", "geschichte",
+                "kapitel", "volumen", "index", "archiv", "der", "die", "das", "und", "fuer",
+                "mit", "von", "aus", "nach", "ueber", "unter", "zwischen", "durch", "immer"
+            ],
+            it: [
+                "sistema", "vettore", "modulo", "nucleo", "segnale", "flusso", "cif", "matrice",
+                "protocollo", "rete", "binario", "sintassi", "render", "pacchetto", "memoria", "filo",
+                "dispositivo", "ponte", "client", "server", "router", "schermo", "finestra", "quadro",
+                "pixel", "vertice", "griglia", "acciaio", "cobalto", "artico", "oceano", "ghiacciaio",
+                "orizzonte", "corrente", "marea", "faro", "bussola", "ancora", "porto", "nave",
+                "radar", "sonar", "orbita", "lancio", "spinta", "motore", "turbina", "circuito",
+                "sensore", "analogico", "digitale", "ottica", "laser", "prisma", "specchio", "vetro",
+                "cristallo", "quarzo", "carbonio", "titanio", "lega", "fucina", "incudine", "martello",
+                "scalpello", "design", "arte", "costruire", "creare", "fuoco", "ritmo", "velocita",
+                "movimento", "energia", "luce", "suono", "impulso", "onda", "scintilla", "nuvola",
+                "tempesta", "gelo", "inverno", "nord", "polare", "vetta", "cresta", "valle",
+                "canyon", "fiume", "foresta", "legno", "pietra", "granito", "marmo", "ardesia",
+                "carta", "inchiostro", "lettera", "parola", "frase", "storia", "capitolo", "volume",
+                "indice", "archivio", "il", "lo", "la", "i", "gli", "le", "un", "uno",
+                "una", "per", "con", "da", "in", "su", "tra", "fra", "durante", "sempre"
+            ]
+        };
+
+        const PUNCTUATION = [",", ".", "!", "?", ";", ":"];
+
+        const VK_ROWS = [
+            ['q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p'],
+            ['a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l'],
+            ['z', 'x', 'c', 'v', 'b', 'n', 'm', 'BACKSPACE']
+        ];
+
+        const SWITCH_PROFILES = [
+            { label: 'THOCKY LINEAR', pitchBase: 130, pitchJitter: 25, noiseGain: 0.12, bodyGain: 0.28 },
+            { label: 'CLICKY TACTILE', pitchBase: 380, pitchJitter: 60, noiseGain: 0.22, bodyGain: 0.18 },
+            { label: 'CREAMY SILENT', pitchBase: 90, pitchJitter: 15, noiseGain: 0.05, bodyGain: 0.22 },
+            { label: 'TYPEWRITER BELL', pitchBase: 520, pitchJitter: 40, noiseGain: 0.3, bodyGain: 0.35 }
+        ];
+
+        const state = {
+            mode: 'time',
+            timeLimit: 30,
+            wordLimit: 25,
+            punctuation: false,
+            numbers: false,
+            language: 'en',
+            soundEnabled: true,
+            switchProfileIndex: 0,
+            showDeck: true,
+            theme: 'steel-blueprint',
+            words: [],
+            currentIndex: 0,
+            typedChars: '',
+            isStarted: false,
+            isFinished: false,
+            timer: 0,
+            timeLeft: 30,
+            intervalId: null,
+            errorsCount: 0,
+            correctCharsCount: 0,
+            incorrectCharsCount: 0,
+            extraCharsCount: 0,
+            missedCharsCount: 0,
+            telemetryHistory: []
+        };
+
+        const els = {
+            hiddenInput: document.getElementById('hidden-input'),
+            typingArena: document.getElementById('typing-arena'),
+            wordsContainer: document.getElementById('words'),
+            caret: document.getElementById('caret'),
+            liveCounter: document.getElementById('live-counter'),
+            progressBar: document.getElementById('progress-bar'),
+            restartBtn: document.getElementById('restart-btn'),
+            resultsSection: document.getElementById('results-section'),
+            typingSection: document.getElementById('typing-section'),
+            controlDock: document.getElementById('control-dock'),
+            virtualKeyboard: document.getElementById('virtual-keyboard'),
+            soundToggle: document.getElementById('sound-toggle'),
+            soundIconOn: document.getElementById('sound-icon-on'),
+            soundIconOff: document.getElementById('sound-icon-off'),
+            hudWpm: document.getElementById('hud-wpm'),
+            hudAcc: document.getElementById('hud-acc')
+        };
+
+        let audioCtx = null;
+        function initAudio() {
+            if (!audioCtx) {
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                if (AudioContext) audioCtx = new AudioContext();
+            }
+            if (audioCtx && audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+        }
+
+        function playTactileClick({ isError = false, keyType = 'char' }) {
+            if (!state.soundEnabled) return;
+            initAudio();
+            if (!audioCtx) return;
+
+            const profile = SWITCH_PROFILES[state.switchProfileIndex] || SWITCH_PROFILES[0];
+            const now = audioCtx.currentTime;
+
+            let baseFreq = profile.pitchBase + (Math.random() * 2 - 1) * profile.pitchJitter;
+            if (keyType === 'space') baseFreq *= 0.65;
+            if (keyType === 'backspace') baseFreq *= 1.25;
+            if (isError) baseFreq *= 0.55;
+
+            const osc = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+            osc.type = isError ? 'sawtooth' : 'triangle';
+            osc.frequency.setValueAtTime(baseFreq, now);
+            osc.frequency.exponentialRampToValueAtTime(baseFreq * 0.3, now + 0.045);
+
+            gainNode.gain.setValueAtTime(profile.bodyGain, now);
+            gainNode.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
+
+            osc.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+            osc.start(now);
+            osc.stop(now + 0.05);
+
+            const bufferSize = audioCtx.sampleRate * 0.025;
+            const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+            const data = buffer.getChannelData(0);
+            for (let i = 0; i < bufferSize; i++) {
+                data[i] = Math.random() * 2 - 1;
+            }
+
+            const noise = audioCtx.createBufferSource();
+            noise.buffer = buffer;
+            const filter = audioCtx.createBiquadFilter();
+            filter.type = 'bandpass';
+            filter.frequency.value = isError ? 800 : 2200;
+            filter.Q.value = 2.5;
+
+            const noiseGain = audioCtx.createGain();
+            noiseGain.gain.setValueAtTime(profile.noiseGain, now);
+            noiseGain.gain.exponentialRampToValueAtTime(0.001, now + 0.025);
+
+            noise.connect(filter);
+            filter.connect(noiseGain);
+            noiseGain.connect(audioCtx.destination);
+            noise.start(now);
+            noise.stop(now + 0.025);
+
+            if (keyType === 'bell' && state.switchProfileIndex === 3) {
+                const bellOsc = audioCtx.createOscillator();
+                const bellGain = audioCtx.createGain();
+                bellOsc.type = 'sine';
+                bellOsc.frequency.setValueAtTime(2450, now);
+                bellGain.gain.setValueAtTime(0.15, now);
+                bellGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.35);
+                bellOsc.connect(bellGain);
+                bellGain.connect(audioCtx.destination);
+                bellOsc.start(now);
+                bellOsc.stop(now + 0.35);
+            }
+        }
+
+        function playCompletionChime() {
+            if (!state.soundEnabled) return;
+            initAudio();
+            if (!audioCtx) return;
+
+            const notes = [523.25, 659.25, 783.99, 1046.50];
+            notes.forEach((freq, idx) => {
+                const now = audioCtx.currentTime + idx * 0.09;
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(freq, now);
+                gain.gain.setValueAtTime(0.18, now);
+                gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.35);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start(now);
+                osc.stop(now + 0.35);
+            });
+        }
+
+        function generateWordsList() {
+            const bank = MULTILINGUAL_WORD_BANKS[state.language] || MULTILINGUAL_WORD_BANKS.en;
+            const count = state.mode === 'words' ? state.wordLimit + 10 : 120;
+            const result = [];
+            for (let i = 0; i < count; i++) {
+                let word = bank[Math.floor(Math.random() * bank.length)];
+                if (state.numbers && Math.random() < 0.15) {
+                    word = Math.floor(Math.random() * 999).toString();
+                } else if (state.punctuation && Math.random() < 0.22) {
+                    word += PUNCTUATION[Math.floor(Math.random() * PUNCTUATION.length)];
+                }
+                result.push(word);
+            }
+            return result;
+        }
+
+        function renderWords() {
+            els.wordsContainer.innerHTML = '';
+            state.words.forEach((word, wIdx) => {
+                const wordSpan = document.createElement('span');
+                wordSpan.className = 'word';
+                wordSpan.dataset.wordIndex = wIdx;
+
+                for (let cIdx = 0; cIdx < word.length; cIdx++) {
+                    const letterSpan = document.createElement('span');
+                    letterSpan.className = 'letter';
+                    letterSpan.textContent = word[cIdx];
+                    wordSpan.appendChild(letterSpan);
+                }
+                els.wordsContainer.appendChild(wordSpan);
+            });
+
+            setTimeout(updateCaretPosition, 10);
+        }
+
+        function updateCaretPosition() {
+            const wordSpans = els.wordsContainer.querySelectorAll('.word');
+            if (!wordSpans.length) return;
+
+            const currentWordSpan = wordSpans[state.currentIndex];
+            if (!currentWordSpan) return;
+
+            const letters = currentWordSpan.querySelectorAll('.letter');
+            let targetLeft = 0;
+            let targetTop = currentWordSpan.offsetTop;
+
+            const typedWord = state.typedChars;
+            if (typedWord.length < letters.length) {
+                const targetLetter = letters[typedWord.length];
+                targetLeft = targetLetter.offsetLeft;
+            } else if (letters.length > 0) {
+                const lastLetter = letters[letters.length - 1];
+                targetLeft = lastLetter.offsetLeft + lastLetter.offsetWidth;
+            } else {
+                targetLeft = currentWordSpan.offsetLeft;
+            }
+
+            els.caret.style.left = `${targetLeft}px`;
+            els.caret.style.top = `${targetTop}px`;
+
+            const targetTopNum = parseInt(targetTop) || 0;
+            if (targetTopNum > 60) {
+                const scrollOffset = targetTopNum - 50;
+                els.wordsContainer.style.transform = `translateY(-${scrollOffset}px)`;
+            } else {
+                els.wordsContainer.style.transform = `translateY(0px)`;
+            }
+        }
+
+        function focusArena() {
+            els.hiddenInput.focus();
+            els.typingArena.classList.remove('blurred');
+        }
+
+        function blurArena() {
+            els.typingArena.classList.add('blurred');
+        }
+
+        function renderSubOptions() {
+            const container = document.getElementById('sub-options');
+            container.innerHTML = '';
+
+            if (state.mode === 'time') {
+                [15, 30, 60].forEach(sec => {
+                    const btn = document.createElement('button');
+                    btn.className = `keycap-btn px-3 py-1.5 rounded-lg text-xs ${state.timeLimit === sec ? 'active' : ''}`;
+                    btn.textContent = `${sec}s`;
+                    btn.addEventListener('click', () => {
+                        state.timeLimit = sec;
+                        renderSubOptions();
+                        resetTest(false);
+                        saveProgressToCloud(true);
+                    });
+                    container.appendChild(btn);
+                });
+            } else {
+                [10, 25, 50].forEach(wCount => {
+                    const btn = document.createElement('button');
+                    btn.className = `keycap-btn px-3 py-1.5 rounded-lg text-xs ${state.wordLimit === wCount ? 'active' : ''}`;
+                    btn.textContent = `${wCount}w`;
+                    btn.addEventListener('click', () => {
+                        state.wordLimit = wCount;
+                        renderSubOptions();
+                        resetTest(false);
+                        saveProgressToCloud(true);
+                    });
+                    container.appendChild(btn);
+                });
+            }
+        }
+
+        function buildVirtualKeyboard() {
+            VK_ROWS.forEach((row, rIdx) => {
+                const rowEl = document.getElementById(`vk-row-${rIdx + 1}`);
+                if (!rowEl) return;
+                rowEl.innerHTML = '';
+
+                row.forEach(key => {
+                    const keyEl = document.createElement('div');
+                    keyEl.className = 'vk-key';
+                    keyEl.dataset.vk = key.toLowerCase();
+                    keyEl.textContent = key === 'BACKSPACE' ? 'BACKSPACE' : key.toUpperCase();
+                    if (key === 'BACKSPACE') {
+                        keyEl.style.minWidth = '75px';
+                    }
+                    rowEl.appendChild(keyEl);
+                });
+            });
+        }
+
+        function flashVirtualKey(char, isError = false) {
+            if (!state.showDeck) return;
+            const keyLower = char.toLowerCase();
+            const selector = `[data-vk="${keyLower === ' ' ? ' ' : keyLower}"]`;
+            const keyEl = els.virtualKeyboard.querySelector(selector);
+            if (keyEl) {
+                keyEl.classList.add(isError ? 'lit-error' : 'lit');
+                setTimeout(() => {
+                    keyEl.classList.remove('lit', 'lit-error');
+                }, 110);
+            }
+        }
+
+        function resetTest(keepSameWords = false) {
+            if (state.intervalId) {
+                clearInterval(state.intervalId);
+                state.intervalId = null;
+            }
+
+            state.isStarted = false;
+            state.isFinished = false;
+            state.currentIndex = 0;
+            state.typedChars = '';
+            state.timer = 0;
+            state.timeLeft = state.timeLimit;
+            state.errorsCount = 0;
+            state.correctCharsCount = 0;
+            state.incorrectCharsCount = 0;
+            state.extraCharsCount = 0;
+            state.missedCharsCount = 0;
+            state.telemetryHistory = [];
+
+            if (!keepSameWords || state.words.length === 0) {
+                state.words = generateWordsList();
+            }
+
+            renderWords();
+            updateCounterDisplay();
+            els.progressBar.style.width = '0%';
+
+            els.resultsSection.classList.add('hidden');
+            els.typingSection.classList.remove('hidden');
+            document.getElementById('engine-status-pill').textContent = 'READY';
+
+            focusArena();
+            saveProgressToCloud(false);
+        }
+
+        function updateCounterDisplay() {
+            if (state.mode === 'time') {
+                els.liveCounter.textContent = state.timeLeft;
+            } else {
+                const remainingWords = Math.max(0, state.wordLimit - state.currentIndex);
+                els.liveCounter.textContent = remainingWords;
+            }
+        }
+
+        function startTimerIfNeeded() {
+            if (state.isStarted || state.isFinished) return;
+            state.isStarted = true;
+            document.getElementById('engine-status-pill').textContent = 'LIVE';
+
+            state.intervalId = setInterval(() => {
+                state.timer++;
+                if (state.mode === 'time') {
+                    state.timeLeft--;
+                    updateCounterDisplay();
+
+                    const progressPct = ((state.timeLimit - state.timeLeft) / state.timeLimit) * 100;
+                    els.progressBar.style.width = `${Math.min(100, progressPct)}%`;
+
+                    if (state.timer % 2 === 0 || state.timeLeft <= 5) {
+                        recordTelemetryPoint();
+                    }
+
+                    if (state.timeLeft <= 0) {
+                        finishTest();
+                    }
+                } else {
+                    updateCounterDisplay();
+                    const progressPct = (state.currentIndex / state.wordLimit) * 100;
+                    els.progressBar.style.width = `${Math.min(100, progressPct)}%`;
+
+                    if (state.timer % 2 === 0) {
+                        recordTelemetryPoint();
+                    }
+                }
+            }, 1000);
+        }
+
+        function recordTelemetryPoint() {
+            const minutes = Math.max(0.01, state.timer / 60);
+            const rawWpm = Math.round((state.correctCharsCount + state.incorrectCharsCount) / 5 / minutes);
+            const netWpm = Math.max(0, Math.round(rawWpm - (state.incorrectCharsCount / minutes)));
+
+            state.telemetryHistory.push({
+                second: state.timer,
+                wpm: netWpm,
+                raw: rawWpm
+            });
+        }
+
+        function handleKeyDown(e) {
+            // Check if user is typing in auth modal inputs
+            const activeEl = document.activeElement;
+            if (activeEl && (activeEl.tagName === 'INPUT' || activeEl.tagName === 'SELECT' || activeEl.tagName === 'TEXTAREA')) {
+                return;
+            }
+
+            if (state.isFinished) {
+                if (e.key === 'Tab' || e.key === 'Enter') {
+                    e.preventDefault();
+                    resetTest(false);
+                }
+                return;
+            }
+
+            if (e.key === 'Escape') {
+                e.preventDefault();
+                resetTest(false);
+                return;
+            }
+
+            if (e.ctrlKey || e.metaKey || e.altKey) {
+                return;
+            }
+
+            focusArena();
+
+            const wordSpans = els.wordsContainer.querySelectorAll('.word');
+            const currentWordSpan = wordSpans[state.currentIndex];
+            if (!currentWordSpan) return;
+            const letters = currentWordSpan.querySelectorAll('.letter');
+
+            if (e.key === 'Backspace') {
+                e.preventDefault();
+                startTimerIfNeeded();
+                flashVirtualKey('backspace', false);
+                playTactileClick({ isError: false, keyType: 'backspace' });
+
+                if (state.typedChars.length > 0) {
+                    state.typedChars = state.typedChars.slice(0, -1);
+                    const idx = state.typedChars.length;
+                    if (idx < letters.length) {
+                        letters[idx].className = 'letter';
+                    }
+                    currentWordSpan.classList.remove('error-underline');
+                } else if (state.currentIndex > 0) {
+                    state.currentIndex--;
+                    const prevWordSpan = wordSpans[state.currentIndex];
+                    const prevLetters = prevWordSpan.querySelectorAll('.letter');
+                    state.typedChars = '';
+                    prevWordSpan.classList.remove('error-underline');
+                }
+                updateCaretPosition();
+                return;
+            }
+
+            if (e.key === ' ') {
+                e.preventDefault();
+                startTimerIfNeeded();
+                flashVirtualKey(' ', false);
+                playTactileClick({ isError: false, keyType: 'space' });
+
+                if (state.typedChars.length === 0) return;
+
+                const targetWord = state.words[state.currentIndex];
+                if (state.typedChars.length < targetWord.length) {
+                    const diff = targetWord.length - state.typedChars.length;
+                    state.missedCharsCount += diff;
+                    for (let i = state.typedChars.length; i < targetWord.length; i++) {
+                        letters[i].classList.add('incorrect');
+                    }
+                }
+
+                state.currentIndex++;
+                state.typedChars = '';
+
+                if (state.mode === 'words' && state.currentIndex >= state.wordLimit) {
+                    finishTest();
+                    return;
+                }
+
+                updateCaretPosition();
+                updateCounterDisplay();
+                return;
+            }
+
+            if (e.key.length === 1) {
+                e.preventDefault();
+                startTimerIfNeeded();
+
+                const targetWord = state.words[state.currentIndex];
+                const charIndex = state.typedChars.length;
+
+                if (charIndex < targetWord.length) {
+                    const expectedChar = targetWord[charIndex];
+                    const isCorrect = e.key === expectedChar;
+
+                    state.typedChars += e.key;
+                    flashVirtualKey(e.key, !isCorrect);
+                    playTactileClick({ isError: !isCorrect, keyType: 'char' });
+
+                    if (isCorrect) {
+                        letters[charIndex].classList.add('correct');
+                        state.correctCharsCount++;
+                    } else {
+                        letters[charIndex].classList.add('incorrect');
+                        state.incorrectCharsCount++;
+                        state.errorsCount++;
+                        currentWordSpan.classList.add('error-underline');
+                    }
+                } else {
+                    // Extra character typed beyond word length
+                    state.typedChars += e.key;
+                    state.extraCharsCount++;
+                    state.incorrectCharsCount++;
+                    state.errorsCount++;
+                    flashVirtualKey(e.key, true);
+                    playTactileClick({ isError: true, keyType: 'char' });
+                }
+
+                updateCaretPosition();
+            }
+        }
+
+        function finishTest() {
+            if (state.isFinished) return;
+            state.isFinished = true;
+            if (state.intervalId) {
+                clearInterval(state.intervalId);
+                state.intervalId = null;
+            }
+
+            recordTelemetryPoint();
+            playCompletionChime();
+
+            const minutes = Math.max(0.01, state.timer / 60);
+            const totalChars = state.correctCharsCount + state.incorrectCharsCount;
+            const rawWpm = Math.round((totalChars / 5) / minutes);
+            const netWpm = Math.max(0, Math.round(rawWpm - (state.incorrectCharsCount / minutes)));
+
+            const totalKeyCount = state.correctCharsCount + state.incorrectCharsCount + state.extraCharsCount + state.missedCharsCount;
+            const accuracy = totalKeyCount > 0 ? Math.max(0, Math.round((state.correctCharsCount / totalKeyCount) * 100)) : 100;
+
+            // Update Bento UI
+            document.getElementById('res-wpm').textContent = netWpm;
+            document.getElementById('res-acc').textContent = `${accuracy}%`;
+            document.getElementById('res-raw').textContent = rawWpm;
+            document.getElementById('res-consistency').textContent = `${Math.max(40, Math.min(99, 100 - Math.round(state.errorsCount * 2.5)))}%`;
+            document.getElementById('res-chars').textContent = `${state.correctCharsCount}/${state.incorrectCharsCount}/${state.extraCharsCount}/${state.missedCharsCount}`;
+            document.getElementById('res-duration').textContent = `${state.timer}s`;
+            document.getElementById('res-test-type').textContent = `${state.mode} ${state.mode === 'time' ? state.timeLimit : state.wordLimit}`;
+
+            // Update career stats
+            cloudProgress.testsCompleted++;
+            cloudProgress.totalAccuracySum += accuracy;
+            if (netWpm > cloudProgress.bestWpm) {
+                cloudProgress.bestWpm = netWpm;
+            }
+            cloudProgress.recentTests.push({
+                date: new Date().toISOString(),
+                wpm: netWpm,
+                accuracy: accuracy
+            });
+
+            document.getElementById('footer-best-wpm').textContent = cloudProgress.bestWpm;
+
+            els.typingSection.classList.add('hidden');
+            els.resultsSection.classList.remove('hidden');
+
+            renderTelemetryChart();
+            saveProgressToCloud(true);
+        }
+
+        let wpmChartInstance = null;
+        function renderTelemetryChart() {
+            const ctx = document.getElementById('wpm-chart').getContext('2d');
+            if (wpmChartInstance) {
+                wpmChartInstance.destroy();
+            }
+
+            const labels = state.telemetryHistory.map(h => `${h.s}s`);
+            const netWpmData = state.telemetryHistory.map(h => h.wpm);
+            const rawWpmData = state.telemetryHistory.map(h => h.raw);
+
+            const isLight = document.documentElement.getAttribute('data-theme') === 'arctic-paper' || document.documentElement.getAttribute('data-theme') === 'matcha-botanical';
+            const gridColor = isLight ? 'rgba(51, 103, 144, 0.12)' : 'rgba(255, 255, 255, 0.08)';
+            const textColor = isLight ? '#1d2d3d' : '#f0f6fc';
+
+            wpmChartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: 'Net WPM',
+                            data: netWpmData,
+                            borderColor: '#56cfe1',
+                            backgroundColor: 'rgba(86, 207, 225, 0.15)',
+                            fill: true,
+                            tension: 0.35,
+                            borderWidth: 3,
+                            pointRadius: 3
+                        },
+                        {
+                            label: 'Raw WPM',
+                            data: rawWpmData,
+                            borderColor: '#336790',
+                            backgroundColor: 'transparent',
+                            borderDash: [4, 4],
+                            tension: 0.35,
+                            borderWidth: 2,
+                            pointRadius: 2
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            labels: {
+                                color: textColor,
+                                font: { family: 'JetBrains Mono', size: 11 }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: { color: gridColor },
+                            ticks: { color: textColor, font: { family: 'JetBrains Mono', size: 10 } }
+                        },
+                        y: {
+                            grid: { color: gridColor },
+                            ticks: { color: textColor, font: { family: 'JetBrains Mono', size: 10 } },
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+
+        function setupAuthModal() {
+            const modal = document.getElementById('auth-modal');
+            const openBtn = document.getElementById('auth-open-btn');
+            const closeBtn = document.getElementById('auth-close-btn');
+            const tabSignIn = document.getElementById('tab-signin');
+            const tabSignUp = document.getElementById('tab-signup');
+            const authForm = document.getElementById('auth-form');
+            const feedbackEl = document.getElementById('auth-feedback');
+            const signOutBtn = document.getElementById('signout-btn');
+            const forceSyncBtn = document.getElementById('force-sync-btn');
+            const togglePasswordBtn = document.getElementById('toggle-password-visibility');
+            const passwordInput = document.getElementById('auth-password');
+            const eyeIcon = document.getElementById('eye-icon');
+            const eyeOffIcon = document.getElementById('eye-off-icon');
+
+            openBtn.addEventListener('click', () => {
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+            });
+
+            closeBtn.addEventListener('click', () => {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+                focusArena();
+            });
+
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    modal.classList.add('hidden');
+                    modal.classList.remove('flex');
+                    focusArena();
+                }
+            });
+
+            togglePasswordBtn.addEventListener('click', () => {
+                const isPassword = passwordInput.type === 'password';
+                passwordInput.type = isPassword ? 'text' : 'password';
+                eyeIcon.classList.toggle('hidden', isPassword);
+                eyeOffIcon.classList.toggle('hidden', !isPassword);
+            });
+
+            tabSignIn.addEventListener('click', () => {
+                authMode = 'signin';
+                tabSignIn.classList.add('active');
+                tabSignUp.classList.remove('active');
+                document.getElementById('auth-submit-btn').textContent = 'SIGN IN TO DECK';
+                feedbackEl.classList.add('hidden');
+            });
+
+            tabSignUp.addEventListener('click', () => {
+                authMode = 'signup';
+                tabSignUp.classList.add('active');
+                tabSignIn.classList.remove('active');
+                document.getElementById('auth-submit-btn').textContent = 'REGISTER PILOT ACCOUNT';
+                feedbackEl.classList.add('hidden');
+            });
+
+            authForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const email = document.getElementById('auth-email').value;
+                const password = passwordInput.value;
+
+                feedbackEl.className = 'hidden mb-4 px-3.5 py-2.5 rounded-xl text-xs font-mono-code border';
+                feedbackEl.classList.remove('hidden');
+                feedbackEl.classList.add('bg-blue-500/10', 'border-blue-500/30', 'text-blue-300');
+                feedbackEl.textContent = authMode === 'signup' ? 'Registering pilot account...' : 'Authenticating...';
+
+                try {
+                    let cred;
+                    if (authMode === 'signup') {
+                        cred = await createUserWithEmailAndPassword(auth, email, password);
+                    } else {
+                        cred = await signInWithEmailAndPassword(auth, email, password);
+                    }
+
+                    feedbackEl.classList.remove('bg-blue-500/10', 'border-blue-500/30', 'text-blue-300');
+                    feedbackEl.classList.add('bg-emerald-500/10', 'border-emerald-500/30', 'text-emerald-300');
+                    feedbackEl.textContent = 'Authentication successful! Syncing progress...';
+
+                    setTimeout(() => {
+                        modal.classList.add('hidden');
+                        modal.classList.remove('flex');
+                        focusArena();
+                    }, 900);
+                } catch (err) {
+                    console.error('Auth error:', err);
+                    feedbackEl.classList.remove('bg-blue-500/10', 'border-blue-500/30', 'text-blue-300');
+                    feedbackEl.classList.add('bg-rose-500/10', 'border-rose-500/30', 'text-rose-300');
+                    feedbackEl.textContent = `Error: ${err.message}`;
+                }
+            });
+
+            signOutBtn.addEventListener('click', async () => {
+                try {
+                    await signOut(auth);
+                    modal.classList.add('hidden');
+                    modal.classList.remove('flex');
+                    focusArena();
+                } catch (err) {
+                    console.error('Sign out error:', err);
+                }
+            });
+
+            forceSyncBtn.addEventListener('click', async () => {
+                await saveProgressToCloud(true);
+                updateSyncIndicator('FORCED SYNC', 'bg-emerald-400');
+            });
+
+            onAuthStateChanged(auth, async (user) => {
+                currentUser = user;
+                const guestView = document.getElementById('auth-guest-view');
+                const userView = document.getElementById('auth-user-view');
+                const authBtnLabel = document.getElementById('auth-btn-label');
+
+                if (user && !user.isAnonymous) {
+                    authBtnLabel.textContent = user.email ? user.email.split('@')[0] : 'PILOT';
+                    updateSyncIndicator('CLOUD SYNCED', 'bg-emerald-400');
+                    document.getElementById('footer-sync-state').textContent = 'CLOUD SYNCED';
+
+                    guestView.classList.add('hidden');
+                    guestView.classList.remove('flex');
+                    userView.classList.remove('hidden');
+                    userView.classList.add('flex');
+
+                    document.getElementById('profile-email').textContent = user.email || 'Anonymous Pilot';
+                    document.getElementById('profile-uid').textContent = user.uid;
+
+                    await loadProgressFromCloud(user.uid);
+                    updateProfileModalUI();
+                } else {
+                    authBtnLabel.textContent = 'SIGN IN';
+                    updateSyncIndicator('GUEST MODE', 'bg-amber-400');
+                    document.getElementById('footer-sync-state').textContent = 'GUEST MODE';
+
+                    userView.classList.add('hidden');
+                    userView.classList.remove('flex');
+                    guestView.classList.remove('hidden');
+                    guestView.classList.add('flex');
+                }
+            });
+        }
+
+        function updateProfileModalUI() {
+            document.getElementById('profile-best-wpm').textContent = cloudProgress.bestWpm;
+            document.getElementById('profile-tests-count').textContent = cloudProgress.testsCompleted;
+            
+            const avgAcc = cloudProgress.testsCompleted > 0
+                ? Math.round(cloudProgress.totalAccuracySum / cloudProgress.testsCompleted)
+                : 100;
+            document.getElementById('profile-avg-acc').textContent = `${avgAcc}%`;
+            document.getElementById('footer-best-wpm').textContent = cloudProgress.bestWpm;
+        }
+
+        async function init() {
+            setupAuthModal();
+            buildVirtualKeyboard();
+
+            document.getElementById('language-select').addEventListener('change', (e) => {
+                state.language = e.target.value;
+                resetTest(false);
+                saveProgressToCloud(true);
+            });
+
+            document.getElementById('mode-time').addEventListener('click', () => {
+                state.mode = 'time';
+                document.getElementById('mode-time').classList.add('active');
+                document.getElementById('mode-words').classList.remove('active');
+                renderSubOptions();
+                resetTest(false);
+                saveProgressToCloud(true);
+            });
+
+            document.getElementById('mode-words').addEventListener('click', () => {
+                state.mode = 'words';
+                document.getElementById('mode-words').classList.add('active');
+                document.getElementById('mode-time').classList.remove('active');
+                renderSubOptions();
+                resetTest(false);
+                saveProgressToCloud(true);
+            });
+
+            document.getElementById('toggle-punctuation').addEventListener('click', (e) => {
+                state.punctuation = !state.punctuation;
+                e.currentTarget.classList.toggle('active', state.punctuation);
+                resetTest(false);
+                saveProgressToCloud(true);
+            });
+
+            document.getElementById('toggle-numbers').addEventListener('click', (e) => {
+                state.numbers = !state.numbers;
+                e.currentTarget.classList.toggle('active', state.numbers);
+                resetTest(false);
+                saveProgressToCloud(true);
+            });
+
+            document.querySelectorAll('[data-theme-target]').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const targetTheme = btn.dataset.themeTarget;
+                    state.theme = targetTheme;
+                    document.documentElement.setAttribute('data-theme', targetTheme);
+                    document.getElementById('footer-theme-name').textContent = targetTheme.toUpperCase();
+
+                    document.querySelectorAll('[data-theme-target]').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+
+                    if (state.isFinished) renderTelemetryChart();
+                    focusArena();
+                    saveProgressToCloud(true);
+                });
+            });
+
+            document.getElementById('toggle-vk-btn').addEventListener('click', (e) => {
+                state.showDeck = !state.showDeck;
+                e.currentTarget.classList.toggle('active', state.showDeck);
+                els.virtualKeyboard.classList.toggle('md:flex', state.showDeck);
+                focusArena();
+                saveProgressToCloud(true);
+            });
+
+            els.soundToggle.addEventListener('click', () => {
+                state.soundEnabled = !state.soundEnabled;
+                els.soundToggle.classList.toggle('active', state.soundEnabled);
+                els.soundIconOn.classList.toggle('hidden', !state.soundEnabled);
+                els.soundIconOff.classList.toggle('hidden', state.soundEnabled);
+                if (state.soundEnabled) playTactileClick({ isError: false, keyType: 'char' });
+                focusArena();
+                saveProgressToCloud(true);
+            });
+
+            document.getElementById('switch-profile-btn').addEventListener('click', () => {
+                state.switchProfileIndex = (state.switchProfileIndex + 1) % SWITCH_PROFILES.length;
+                const activeProfile = SWITCH_PROFILES[state.switchProfileIndex];
+                document.getElementById('switch-profile-label').textContent = activeProfile.label;
+                if (!state.soundEnabled) {
+                    state.soundEnabled = true;
+                    els.soundToggle.classList.add('active');
+                    els.soundIconOn.classList.remove('hidden');
+                    els.soundIconOff.classList.add('hidden');
+                }
+                playTactileClick({ isError: false, keyType: 'space' });
+                focusArena();
+                saveProgressToCloud(true);
+            });
+
+            document.getElementById('restart-btn').addEventListener('click', () => resetTest(false));
+            document.getElementById('next-test-btn').addEventListener('click', () => resetTest(false));
+            document.getElementById('repeat-test-btn').addEventListener('click', () => resetTest(true));
+            document.getElementById('logo-btn').addEventListener('click', () => resetTest(false));
+
+            els.typingArena.addEventListener('click', focusArena);
+            els.hiddenInput.addEventListener('blur', () => {
+                setTimeout(() => {
+                    if (document.activeElement !== els.hiddenInput) {
+                        blurArena();
+                    }
+                }, 120);
+            });
+
+            window.addEventListener('keydown', handleKeyDown);
+            window.addEventListener('resize', updateCaretPosition);
+
+            renderSubOptions();
+            resetTest(false);
+            await initAuthSession();
+        }
+
+        window.onload = init;
+    </script>
+</body>
+</html>
